@@ -17,7 +17,7 @@ const LoginPage = () => {
         e.preventDefault();
       }
   return (
-    <div className='bg-linear-to-b from-neutral-700 via-neutral-500 to-neutral-700 h-screen py-40'>
+    <div className='bg-linear-to-b from-neutral-200 via-neutral-300 to-neutral-200 h-screen py-40'>
         <form onSubmit={handleSubmit} className='border border-gray-300 max-w-85 mx-auto p-8 shadow-lg shadow-black rounded-lg bg-white'>
             <h2 className='text-center text-2xl font-bold mb-12 text-neutral-800'>Login</h2>
             
