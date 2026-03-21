@@ -6,17 +6,28 @@ import RegisterPage from './pages/RegisterPage/RegisterPage'
 
 // 1. Import the new Training Page
 import TrainingPage from './pages/TrainingPage/TrainingPage'
+import ComplaintsPage from './pages/ComplaintsPage/ComplaintsPage'
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard'
 
 const App = () => {
   return (
     <div>
       <Routes>
-        <Route path='/driverDashboard' element={<DriverDashboard/>}/>
+        {/*1. Route for signup and login page */}
         <Route path='/login' element={<LoginPage/>}/>
         <Route path='/signup' element={<RegisterPage/>}/>
         
-        {/* 2. Add the specific route for the training page */}
+        {/* 2. Route for the driverDashboard*/}
+        <Route path='/driverDashboard' element={<DriverDashboard/>}/>
+
+        {/* 3. Route for the training page */}
         <Route path='/training' element={<TrainingPage/>}/>
+
+        {/* 4. Route for Complaints page */}
+        <Route path='/complaints' element={<ComplaintsPage/>}/>
+
+        {/* 5. Route for AdminDashboard page */}
+        <Route path='/adminDashboard' element={<AdminDashboard/>}/>
       </Routes>
     </div>
   )
