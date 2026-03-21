@@ -60,7 +60,7 @@ const ComplaintsPage = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-200 p-8">
+    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-200 p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-12">
@@ -72,7 +72,7 @@ const ComplaintsPage = ({ onBack }) => {
             Back to Dashboard
           </button>
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-neutral-800 to-neutral-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-linear-to-r from-neutral-800 to-neutral-600 bg-clip-text text-transparent">
               File a Complaint
             </h1>
             <p className="text-neutral-600 mt-2">Report violations, passenger issues, or vehicle problems</p>
@@ -117,7 +117,7 @@ const ComplaintsPage = ({ onBack }) => {
                   value={formData.description}
                   onChange={handleInputChange}
                   placeholder="Describe the issue in detail..."
-                  className="w-full p-4 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-300 resize-vertical min-h-[120px] shadow-sm"
+                  className="w-full p-4 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-300 resize-vertical min-h-30 shadow-sm"
                   required
                 />
               </div>
@@ -159,7 +159,7 @@ const ComplaintsPage = ({ onBack }) => {
               <button 
                 type="submit" 
                 disabled={submitting || !formData.description || !formData.location}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-xl hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
+                className="w-full bg-linear-to-r from-orange-500 to-red-500 text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-xl hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
               >
                 {submitting ? (
                   <>
