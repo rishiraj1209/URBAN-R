@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
+
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email:"",
         password:"",
@@ -13,8 +16,33 @@ const LoginPage = () => {
         setFormData(prev => ({...prev, [name]:value}))
       }
 
-      const handleSubmit = (e)=>{
+      const handleSubmit = async (e)=>{
         e.preventDefault();
+
+        const {email, password} = formData;
+
+        try {
+            const res = await axios.post('http://localhost:3000/api/auth/login',{
+                email,
+                password
+            });
+
+            const {token,role:userRole} = res.data;
+
+            localStorage.setItem("token",token);
+            localStorage.setItem("role",userRole);
+
+            if(userRole === "admin"){
+                navigate("/adminDashboard")
+            }else if(userRole === "driver"){
+                navigate("/driverDashboard")
+            }else if(userRole === "passenger"){
+                navigate("/complaints")
+            }
+        } catch (error) {
+            console.log(error);
+            alert("login failed");
+        }  
       }
   return (
     <div className='bg-linear-to-b from-neutral-200 via-neutral-300 to-neutral-200 h-screen py-40'>
@@ -79,7 +107,7 @@ const LoginPage = () => {
                 </div>
             </div>
 
-            <button className='w-full my-6 rounded py-2 px-8 text-white cursor-pointer bg-indigo-500 hover:bg-indigo-600 transition-all duration-200 font-medium'>Login</button>
+            <button type='submit' className='w-full my-6 rounded py-2 px-8 text-white cursor-pointer bg-indigo-500 hover:bg-indigo-600 transition-all duration-200 font-medium'>Login</button>
             <p className='text-center text-gray-600'>Don't have an account? <Link className='text-blue-500 underline' to="/signup">Sign Up</Link></p>
         </form>
     </div>

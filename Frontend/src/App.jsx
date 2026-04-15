@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage/RegisterPage'
 import TrainingPage from './pages/TrainingPage/TrainingPage'
 import ComplaintsPage from './pages/ComplaintsPage/ComplaintsPage'
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const App = () => {
   return (
@@ -18,16 +19,16 @@ const App = () => {
         <Route path='/signup' element={<RegisterPage/>}/>
         
         {/* 2. Route for the driverDashboard*/}
-        <Route path='/driverDashboard' element={<DriverDashboard/>}/>
+        <Route path='/driverDashboard' element={<ProtectedRoute allowedRole={"driver"}><DriverDashboard/></ProtectedRoute>}/>
 
         {/* 3. Route for the training page */}
         <Route path='/training' element={<TrainingPage/>}/>
 
         {/* 4. Route for Complaints page */}
-        <Route path='/complaints' element={<ComplaintsPage/>}/>
+        <Route path='/complaints' element={<ProtectedRoute allowedRole={"passenger"}><ComplaintsPage/></ProtectedRoute>}/>
 
         {/* 5. Route for AdminDashboard page */}
-        <Route path='/adminDashboard' element={<AdminDashboard/>}/>
+        <Route path='/adminDashboard' element={<ProtectedRoute allowedRole={"admin"}><AdminDashboard/></ProtectedRoute>}/>
       </Routes>
     </div>
   )
