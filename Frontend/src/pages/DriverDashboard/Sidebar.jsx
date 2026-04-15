@@ -1,16 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const Sidebar = () => {
+  const [open, isOpen] = useState(false);
   return (
-    <div className='w-64 fixed left-0 top-0 bg-blue-900 text-white h-screen text-xl font-semibold px-4 py-8'>
-      <ul className='space-y-4'>
-        <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Dashboard</li>
-        <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>My Rickshaw</li>
-        <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Training</li>
-        <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Voilations</li>
-        <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Battery Health</li>
-        <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Support</li>
-      </ul>
+    <div className='w-64 fixed left-0 top-0 h-screen  px-4 py-8'>
+      <nav className='bg-white shadow-md h-full'>
+
+        <div className='flex justify-between items-center'>
+          <h2>Dashboard</h2>
+          <button></button>
+        </div>
+
+        <div>
+          <ul className='space-y-4'>
+            <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>My Rickshaw</li>
+            <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Training</li>
+            <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Voilations</li>
+            <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Battery Health</li>
+            <li className='text-shadow-sm hover:text-neutral-300 transition-all duration-200 cursor-pointer'>Support</li>
+          </ul>
+        </div>
+        
+      </nav>
+      
     </div>
   )
 }
