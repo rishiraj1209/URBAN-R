@@ -1,10 +1,15 @@
 import React from 'react'
 
-const VoilationTable = () => {
-  const voilations = [
-    {date:"10 Feb", type:"Overspeed", severity:"Moderate"},
-    {date:"11 Feb", type:"Restricted Zone", severity:"High"},
-  ]
+const VoilationTable = ({data}) => {
+  if(!data || data.length === 0) {
+    return (
+      <div className='p-8'>
+        <h2 className='text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-neutral-700 to-neutral-900 mb-8 text-shadow-sm'>Recent Voilations</h2>
+        <p className='text-neutral-600'>No violations found</p>
+      </div>
+    )
+  }
+
   return (
     <div className='p-8'>
       <h2 className='text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-neutral-700 to-neutral-900 mb-8 text-shadow-sm'>Recent Voilations</h2>
@@ -19,9 +24,9 @@ const VoilationTable = () => {
           </thead>
 
           <tbody>
-            {voilations.map((v, index)=>(
+            {data.map((v, index)=>(
               <tr className='border-b-2' key={index}>
-                <td className='p-4 text-xl border-2'>{v.date}</td>
+                <td className='p-4 text-xl border-2'>{new Date(v.createdAt).toLocaleDateString()}</td>
                 <td className='p-4 text-xl border-2'>{v.type}</td>
                 <td className={`p-4 text-xl border-2 text-white font-bold border-black ${v.severity === 'High' ? 'bg-red-400':'bg-yellow-400'}`}>{v.severity}</td>
               </tr>

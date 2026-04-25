@@ -15,28 +15,31 @@ import {
   Legend,
 } from "recharts";
 
-const SafetyScoreChart = () => {
+const SafetyScoreChart = ({ data }) => {
+  if (!data) {
+    return <div className="p-8">Loading analytics...</div>;
+  }
 
-  // 🔹 safety trend data
-  const safetyData = [
+  // 🔹 safety trend data from backend
+  const safetyData = data.history || [
     { month: "Jan", score: 92 },
     { month: "Feb", score: 85 },
     { month: "Mar", score: 78 },
     { month: "Apr", score: 82 },
   ];
 
-  // 🔹 violations data
+  // 🔹 violations data - calculate from current data
   const violationData = [
-    { month: "Jan", v: 1 },
-    { month: "Feb", v: 3 },
-    { month: "Mar", v: 4 },
-    { month: "Apr", v: 2 },
+    { month: "Current", v: data.totalViolations || 0 },
   ];
 
-  // 🔹 pie data
+  // 🔹 pie data based on safety score
+  const safePercentage = Math.max(0, Math.min(100, data.safetyScore || 0));
+  const riskPercentage = 100 - safePercentage;
+  
   const riskData = [
-    { name: "Safe", value: 75 },
-    { name: "Risk", value: 25 },
+    { name: "Safe", value: safePercentage },
+    { name: "Risk", value: riskPercentage },
   ];
 
   const COLORS = ["#22c55e", "#ef4444"];
@@ -74,7 +77,7 @@ const SafetyScoreChart = () => {
 
         {/* Violations Chart */}
         <div className="bg-white rounded-2xl shadow p-4 h-72">
-          <h3 className="font-semibold mb-3">Monthly Violations</h3>
+          <h3 className="font-semibold mb-3">Violations</h3>
 
           <ResponsiveContainer width="100%" height="90%">
             <BarChart data={violationData}>

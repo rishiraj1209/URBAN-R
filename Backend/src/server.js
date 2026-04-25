@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv/config';
 import cors from 'cors'
+import driverRoutes from './routes/driverRoutes.js'
+import rickshawRoutes from './routes/rickshawRoutes.js'
 
 import authRouter from './routes/authRoutes.js'
 
@@ -10,6 +12,8 @@ app.use(express.json());
 app.use(cors({origin:"http://localhost:5173", credentials:true}))
 
 app.use('/api/auth',authRouter);
+app.use('/api/driver',driverRoutes);
+app.use('/api/rickshaw',rickshawRoutes);
 
 const start = async ()=>{
     try {

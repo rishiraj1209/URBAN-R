@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 export const login = async(req,res)=>{
     try {
-        const {email, password} = await req.body;
+        const {email, password} = req.body;
         if(!email || !password){
             return res.status(400).json({message:"please enter all the fields"});
         }
@@ -30,7 +30,7 @@ export const login = async(req,res)=>{
 
 export const signup = async (req,res)=>{
     try {
-        const {name, email, password, role} = await req.body;
+        const {name, email, password, role} = req.body;
         if(!name || !email || !password){
             return res.status(400).json({message:"please enter all the fields"});
         }
