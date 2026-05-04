@@ -4,6 +4,9 @@ import dotenv from 'dotenv/config';
 import cors from 'cors'
 import driverRoutes from './routes/driverRoutes.js'
 import rickshawRoutes from './routes/rickshawRoutes.js'
+import trainingRoutes from './routes/trainingRoutes.js'
+import complaintsRoutes from './routes/complaintsRoutes.js'
+
 
 import authRouter from './routes/authRoutes.js'
 
@@ -14,6 +17,8 @@ app.use(cors({origin:"http://localhost:5173", credentials:true}))
 app.use('/api/auth',authRouter);
 app.use('/api/driver',driverRoutes);
 app.use('/api/rickshaw',rickshawRoutes);
+app.use('/api/training', trainingRoutes);
+app.use('/api/complaints', complaintsRoutes);
 
 const start = async ()=>{
     try {
