@@ -16,5 +16,5 @@ const violationSchema = new Schema({
   zone: String
 }, { timestamps: true });
 
-const Voilation = mongoose.model('voilations',violationSchema);
-export {Voilation}
+const Violation = mongoose.model('Violation',violationSchema);
+export {Violation}

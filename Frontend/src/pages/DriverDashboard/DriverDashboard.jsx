@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import Sidebar from './Sidebar'
 import Navbar from './Navbar'
@@ -12,6 +13,7 @@ const DriverDashboard = () => {
   const [stats, setStats] = useState(null);
   const [violations, setViolations] = useState([]);
   const [rickshaw, setRickshaw] = useState(null);
+  const [training, setTraining] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,10 +23,12 @@ const DriverDashboard = () => {
         const statsRes = await api.get('/api/driver/stats');
         const vRes = await api.get('/api/driver/violations');
         const rRes = await api.get('/api/rickshaw/my');
+        const tRes = await api.get('/api/training/mytrainings');
 
         setStats(statsRes.data);
         setViolations(vRes.data || []);
         setRickshaw(rRes.data);
+        setTraining(tRes.data || []);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load data");
         console.error(err);
@@ -66,6 +70,15 @@ const DriverDashboard = () => {
             <div className="bg-white p-4 rounded shadow m-4">
               <h3 className="font-bold">Vehicle: {rickshaw.vehicleNumber}</h3>
               <p>Status: {rickshaw.status}</p>
+            </div>
+          )}
+
+          {/* If driver hasn't passed training, show button */}
+          {(!training || !training.some(t => t.passed)) && (
+            <div className="m-4">
+              <Link to="/training" className="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                Take Mandatory Training
+              </Link>
             </div>
           )}
 

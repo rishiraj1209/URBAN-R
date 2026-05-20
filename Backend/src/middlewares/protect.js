@@ -15,3 +15,12 @@ export const protect = (req, res, next) => {
     res.status(401).json({ message: "Invalid token" });
   }
 };
+
+export const adminProtect = (req, res, next) => {
+  protect(req, res, () => {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+    next();
+  });
+};

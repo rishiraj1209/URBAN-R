@@ -1,20 +1,34 @@
 import React, { useState } from 'react';
+import api from '../../api/axios';
+import { useNavigate } from 'react-router-dom';
 
 const TrainingPage = () => {
   // We use state to track which step of the training the driver is on
   const [currentStep, setCurrentStep] = useState(1);
+  const navigate = useNavigate();
   
   // Quiz state
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizError, setQuizError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleNextStep = () => setCurrentStep(currentStep + 1);
 
-  const handleQuizSubmit = () => {
+  const handleQuizSubmit = async () => {
     // Simple validation: Ensure they answered correctly
     if (quizAnswers.q1 === "route" && quizAnswers.q2 === "admin") {
       setQuizError("");
-      handleNextStep();
+      setSubmitting(true);
+      try {
+        const payload = { score: 100, passed: true };
+        await api.post('/api/training', payload);
+        setSubmitting(false);
+        handleNextStep();
+      } catch (err) {
+        console.error('Failed to save training', err);
+        alert(err.response?.data?.message || 'Failed to save training result');
+        setSubmitting(false);
+      }
     } else {
       setQuizError("You must answer all questions correctly to pass the assessment.");
     }
@@ -100,9 +114,10 @@ const TrainingPage = () => {
 
             <button 
               onClick={handleQuizSubmit}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition"
+              disabled={submitting}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 rounded transition"
             >
-              Submit Assessment
+              {submitting ? 'Submitting...' : 'Submit Assessment'}
             </button>
           </div>
         )}
@@ -124,7 +139,7 @@ const TrainingPage = () => {
             </div>
 
             <button 
-              onClick={() => alert("Redirecting to Dashboard... (Backend API call goes here)")}
+              onClick={() => navigate('/driverDashboard')}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition"
             >
               Acknowledge & Go to Dashboard

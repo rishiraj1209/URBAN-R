@@ -3,7 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 const complaintSchema = new Schema({
   passenger: {
     type: Schema.Types.ObjectId,
-    ref: "users"
+    ref: "User"
   },
 
   rickshaw: {
@@ -11,8 +11,14 @@ const complaintSchema = new Schema({
     ref: "Rickshaw"
   },
 
+  type: {
+    type: String,
+    default: 'other'
+  },
+
   description: String,
   location: String,
+  photo: String,
 
   status: {
     type: String,
@@ -21,5 +27,5 @@ const complaintSchema = new Schema({
   }
 }, { timestamps: true });
 
-const Complaint = mongoose.model('complaints',complaintSchema);
+const Complaint = mongoose.model('Complaint',complaintSchema);
 export {Complaint};

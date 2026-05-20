@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import api from '../../api/axios'
 
 import {
   BarChart,
@@ -17,31 +19,23 @@ import {
 } from "recharts";
 
 const AdminDashboard = () => {
-    const stats = [
-        {title:"Registered Rickshaws", value:1245},
-        {title:"Active Today", value:980},
-        {title:"Suspended", value:45},
-        {title:"Voilations Today", value:132},
-        {title:"High Risk Drivers", value:28},
-    ]
+    const navigate = useNavigate();
+    const [dashboard, setDashboard] = useState(null);
+    const [zoneData, setZoneData] = useState([]);
+    const [violationData, setViolationData] = useState([]);
+    const [driverList, setDriverList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const zoneData = [
-        { zone: "Market", limit: 50, active: 62 },
-        { zone: "School", limit: 30, active: 25 },
-        { zone: "Station", limit: 80, active: 75 },
-    ]
+    const stats = dashboard ? [
+        { title: "Registered Rickshaws", value: dashboard.registeredRickshaws },
+        { title: "Active Today", value: dashboard.activeToday },
+        { title: "Suspended", value: dashboard.suspended },
+        { title: "Voilations Today", value: dashboard.violationsToday },
+        { title: "High Risk Drivers", value: dashboard.highRiskDrivers },
+    ] : [];
 
-    const voilationData = [
-        { no: "JH01AB1234", driver: "Raj", type: "Overspeed", severity: "Medium" },
-        { no: "JH01AB5678", driver: "Aman", type: "Restricted Zone", severity: "High" },
-    ]
-
-    const chartZone = [
-        { name: "Market", v: 40 },
-        { name: "School", v: 15 },
-        { name: "Station", v: 28 },
-    ];
-
+    const chartZone = zoneData.map((zone) => ({ name: zone.zone, v: zone.active }));
     const monthly = [
         { m: "Jan", s: 90 },
         { m: "Feb", s: 82 },
@@ -49,17 +43,42 @@ const AdminDashboard = () => {
     ];
 
     const pieData = [
-    { name: "Safe", value: 70 },
-    { name: "Risk", value: 30 },
+      { name: "Safe", value: 70 },
+      { name: "Risk", value: 30 },
     ];
 
     const COLORS = ["#22c55e", "#dc2626"];
 
-    const driverList = [
-        { name: "Raj", vehicle: "JH01AB1234", battery: "Local", score: 45, status: "Risk" },
-        { name: "Aman", vehicle: "JH01AB5678", battery: "Exide", score: 82, status: "Safe" },
-    ];
+    useEffect(() => {
+      const fetchDashboard = async () => {
+        try {
+          const [dashboardRes, zonesRes, violationsRes, driversRes] = await Promise.all([
+            api.get('/api/admin/dashboard'),
+            api.get('/api/admin/zones'),
+            api.get('/api/admin/violations'),
+            api.get('/api/admin/drivers'),
+          ]);
 
+          setDashboard(dashboardRes.data);
+          setZoneData(zonesRes.data);
+          setViolationData(violationsRes.data);
+          setDriverList(driversRes.data);
+        } catch (err) {
+          setError(err.response?.data?.message || err.message || 'Unable to load admin data');
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchDashboard();
+    }, []);
+
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate('/login');
+    };
 
   return (
     <div className='bg-neutral-100 min-h-screen'>
@@ -78,71 +97,83 @@ const AdminDashboard = () => {
         {/* navbar */}
         <div className='fixed left-64 top-0 right-0 h-24 bg-white shadow-sm shadow-black z-20 px-4 flex justify-between items-center'>
             <h1 className='text-2xl font-bold bg-linear-to-b from-neutral-700 via-neutral-800 to-neutral-900 bg-clip-text text-transparent'>City Regulation Dashboard</h1>
-            <button className='bg-red-500 text-white font-medium rounded-lg px-8 py-2 shadow-sm shadow-black active:shadow-none transition duration-200 cursor-pointer'>Logout</button>
+            <button onClick={handleLogout} className='bg-red-500 text-white font-medium rounded-lg px-8 py-2 shadow-sm shadow-black active:shadow-none transition duration-200 cursor-pointer'>Logout</button>
         </div>
 
         {/* content */}
 
         <div className='mt-24 ml-64 p-8 space-y-8'>
 
-            {/* statCards */}
-            <div className='grid grid-cols-5 gap-4'>
-                {stats.map((stat, index)=>(
-                    <div key={index} className='bg-white p-4 rounded-xl shadow hover:scale-110 transition duration-200'>
-                        <h2 className='text-neutral-500'>{stat.title}</h2>
-                        <p className='text-2xl font-bold'>{stat.value}</p>
-                    </div>
-                ))}
-            </div>
+            {loading ? (
+              <div className='bg-white p-8 rounded-xl shadow'>
+                <p className='text-lg font-medium'>Loading admin dashboard...</p>
+              </div>
+            ) : error ? (
+              <div className='bg-white p-8 rounded-xl shadow'>
+                <p className='text-lg font-medium text-red-600'>Error loading admin dashboard: {error}</p>
+              </div>
+            ) : (
+              <>
+                {/* statCards */}
+                <div className='grid grid-cols-5 gap-4'>
+                    {stats.map((stat, index)=>(
+                        <div key={index} className='bg-white p-4 rounded-xl shadow hover:scale-110 transition duration-200'>
+                            <h2 className='text-neutral-500'>{stat.title}</h2>
+                            <p className='text-2xl font-bold'>{stat.value}</p>
+                        </div>
+                    ))}
+                </div>
 
-            {/* zone regulation */}
-            <div>
-                <h2 className='text-2xl font-semibold mb-4'>Zone Regulation</h2>
-                <table className='w-full rounded-t-lg overflow-hidden'>
-                    <thead className='bg-neutral-200 '>
-                        <tr>
-                            <th className='p-3 text-left'>Zone</th>
-                            <th className='p-3 text-left'>Max Allowed</th>
-                            <th className='p-3 text-left'>Active</th>
-                        </tr>
-                    </thead>
-                    <tbody className='border-b'>
-                        {zoneData.map((zone,i)=>(
-                            <tr key={i} className='border-t'>
-                                <td className='p-3'>{zone.zone}</td>
-                                <td className='p-3'>{zone.limit}</td>
-                                <td className={`${zone.active > zone.limit ? 'text-red-500':'text-green-500'} p-3`}>{zone.active}</td>
+                {/* zone regulation */}
+                <div>
+                    <h2 className='text-2xl font-semibold mb-4'>Zone Regulation</h2>
+                    <table className='w-full rounded-t-lg overflow-hidden bg-white'>
+                        <thead className='bg-neutral-200 '>
+                            <tr>
+                                <th className='p-3 text-left'>Zone</th>
+                                <th className='p-3 text-left'>Total Rickshaws</th>
+                                <th className='p-3 text-left'>Active Rickshaws</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody className='border-b'>
+                            {zoneData.map((zone,i)=>(
+                                <tr key={i} className='border-t'>
+                                    <td className='p-3'>{zone.zone}</td>
+                                    <td className='p-3'>{zone.totalRickshaws}</td>
+                                    <td className={`p-3 ${zone.activeRickshaws > 0 ? 'text-green-500' : 'text-gray-500'}`}>{zone.activeRickshaws}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
-            {/* voilations */}
-            
-            <div>
-                <h2 className='text-2xl font-semibold mb-4'>Recent Voilations</h2>
-                <table className='w-full rounded-t-lg overflow-hidden'>
-                    <thead className='bg-neutral-200 '>
-                        <tr>
-                            <th className='p-3 text-left'>Vehicle</th>
-                            <th className='p-3 text-left'>Driver</th>
-                            <th className='p-3 text-left'>Voilation</th>
-                            <th className='p-3 text-left'>Severity</th>
-                        </tr>
-                    </thead>
-                    <tbody className='border-b'>
-                        {voilationData.map((v,i)=>(
-                            <tr key={i} className='border-t'>
-                                <td className='p-3'>{v.no}</td>
-                                <td className='p-3'>{v.driver}</td>
-                                <td className='p-3'>{v.type}</td>
-                                <td className='p-3'><span className={`py-1 px-3 rounded-full text-sm ${v.severity === 'High' ? 'text-red-600 bg-red-100':'text-yellow-600 bg-yellow-100'}`}>{v.severity}</span></td>
+                {/* voilations */}
+                
+                <div>
+                    <h2 className='text-2xl font-semibold mb-4'>Recent Violations</h2>
+                    <table className='w-full rounded-t-lg overflow-hidden bg-white'>
+                        <thead className='bg-neutral-200 '>
+                            <tr>
+                                <th className='p-3 text-left'>Vehicle</th>
+                                <th className='p-3 text-left'>Driver</th>
+                                <th className='p-3 text-left'>Violation</th>
+                                <th className='p-3 text-left'>Severity</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody className='border-b'>
+                            {violationData.map((v,i)=>(
+                                <tr key={i} className='border-t'>
+                                    <td className='p-3'>{v.rickshaw?.vehicleNumber || 'N/A'}</td>
+                                    <td className='p-3'>{v.driver?.name || 'Unknown'}</td>
+                                    <td className='p-3'>{v.type || 'Unknown'}</td>
+                                    <td className='p-3'><span className={`py-1 px-3 rounded-full text-sm ${v.severity === 'High' ? 'text-red-600 bg-red-100':'text-yellow-600 bg-yellow-100'}`}>{v.severity || 'Medium'}</span></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+              </>
+            )}
 
             {/* Charts */}
 
@@ -205,8 +236,8 @@ const AdminDashboard = () => {
                 <tr>
                     <th className="p-3 text-left">Driver</th>
                     <th className="p-3 text-left">Vehicle</th>
-                    <th className="p-3 text-left">Battery</th>
                     <th className="p-3 text-left">Safety Score</th>
+                    <th className="p-3 text-left">Violations</th>
                     <th className="p-3 text-left">Status</th>
                 </tr>
                 </thead>
@@ -214,11 +245,11 @@ const AdminDashboard = () => {
                 {driverList.map((d, i) => (
                     <tr key={i} className="border-t hover:bg-neutral-50">
                     <td className="p-3">{d.name}</td>
-                    <td className="p-3">{d.vehicle}</td>
-                    <td className="p-3">{d.battery}</td>
-                    <td className="p-3 font-semibold">{d.score}</td>
-                    <td className={`p-3 font-semibold ${d.status === "Risk" ? "text-red-500" : "text-green-600"}`}>
-                        {d.status}
+                    <td className="p-3">{d.vehicleNumber || 'N/A'}</td>
+                    <td className="p-3 font-semibold">{d.safetyScore || 0}</td>
+                    <td className="p-3">{d.totalViolations ?? 0}</td>
+                    <td className={`p-3 font-semibold ${d.status === "suspended" || d.status === "Risk" ? "text-red-500" : "text-green-600"}`}>
+                        {d.status || 'pending'}
                     </td>
                     </tr>
                 ))}

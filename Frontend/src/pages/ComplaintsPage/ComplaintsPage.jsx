@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../api/axios';
 import { ChevronLeft, AlertTriangle, User, Truck, MessageSquare, FileText, Send, Clock, CheckCircle, XCircle, Camera, MapPin, Plus } from 'lucide-react';
 
 const ComplaintsPage = ({ onBack }) => {
@@ -26,6 +27,18 @@ const ComplaintsPage = ({ onBack }) => {
     rejected: 'bg-red-100 text-red-800 border-red-300'
   };
 
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        const res = await api.get('/api/complaints/my');
+        setComplaints(res.data || []);
+      } catch (err) {
+        console.error('Failed to load complaints', err);
+      }
+    };
+    fetchComplaints();
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -40,23 +53,24 @@ const ComplaintsPage = ({ onBack }) => {
     setFormData({ ...formData, photo: e.dataTransfer.files[0] });
   };
 
-  const submitComplaint = (e) => {
+  const submitComplaint = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
-      const newComplaint = {
-        id: Date.now(),
+    try {
+      const payload = {
         type: formData.type,
         description: formData.description,
-        status: 'pending',
-        date: new Date().toISOString().split('T')[0],
         location: formData.location
       };
-      setComplaints([newComplaint, ...complaints]);
+      const res = await api.post('/api/complaints', payload);
+      setComplaints(prev => [res.data, ...prev]);
       setFormData({ type: 'traffic', description: '', location: '', photo: null });
+    } catch (err) {
+      console.error('Failed to submit complaint', err);
+      alert(err.response?.data?.message || 'Failed to submit complaint');
+    } finally {
       setSubmitting(false);
-      // Simulate API call
-    }, 1500);
+    }
   };
 
   return (

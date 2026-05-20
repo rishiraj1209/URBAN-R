@@ -1,11 +1,11 @@
-import { Voilation } from "../models/voilationModel.js";
+import { Violation } from "../models/voilationModel.js";
 import { Training } from "../models/trainingModel.js";
 
 export const getDriverStats = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const violations = await Voilation.find({ driver: userId });
+    const violations = await Violation.find({ driver: userId });
     const training = await Training.findOne({ driver: userId });
 
     const score = 100 - violations.length * 5;

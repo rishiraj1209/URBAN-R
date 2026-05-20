@@ -10,5 +10,5 @@ const batterySchema = new Schema({
   health: Number
 });
 
-const Battery = mongoose.model('batteries',batterySchema);
+const Battery = mongoose.model('Battery',batterySchema);
 export {Battery};

@@ -9,5 +9,5 @@ const trainingSchema = new Schema({
   passed: Boolean
 }, { timestamps: true });
 
-const Training = mongoose.model('trainings',trainingSchema);
+const Training = mongoose.model('Training',trainingSchema);
 export {Training}

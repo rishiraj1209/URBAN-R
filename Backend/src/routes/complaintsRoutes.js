@@ -1,12 +1,13 @@
 import { Router } from 'express';
-import { getAllComplaints, createComplaint, updateComplaintStatus } from '../controllers/complaintController.js';
-import { protect } from '../middlewares/protect.js';
+import { getAllComplaints, createComplaint, updateComplaintStatus, getMyComplaints } from '../controllers/complaintController.js';
+import { protect, adminProtect } from '../middlewares/protect.js';
 
 const router = Router();
 
-router.get('/', getAllComplaints);
+router.get('/', adminProtect, getAllComplaints);
+router.get('/my', protect, getMyComplaints);
 router.post('/', protect, createComplaint);
-router.patch('/:id', protect, updateComplaintStatus);
+router.patch('/:id', adminProtect, updateComplaintStatus);
 
 export default router;
 

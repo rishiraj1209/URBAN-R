@@ -5,8 +5,8 @@ const rickshawSchema = new Schema({
     vehicleNumber:String,
     city:String,
     zone:String,
-    status: { type: String, default: "pending" }
+    status: { type: String, enum: ["pending", "active", "suspended"], default: "pending" }
 }, { timestamps: true })
 
-const Rickshaw = mongoose.model('rickshaws',rickshawSchema);
+const Rickshaw = mongoose.model('Rickshaw',rickshawSchema);
 export {Rickshaw};

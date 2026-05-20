@@ -9,12 +9,14 @@ import complaintsRoutes from './routes/complaintsRoutes.js'
 
 
 import authRouter from './routes/authRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 
 const app = express();
 app.use(express.json());
 app.use(cors({origin:"http://localhost:5173", credentials:true}))
 
 app.use('/api/auth',authRouter);
+app.use('/api/admin', adminRoutes);
 app.use('/api/driver',driverRoutes);
 app.use('/api/rickshaw',rickshawRoutes);
 app.use('/api/training', trainingRoutes);

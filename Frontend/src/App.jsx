@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
+import LandingPage from './pages/LandingPage'
 import DriverDashboard from './pages/DriverDashboard/DriverDashboard'
 import LoginPage from './pages/LoginPage/LoginPage'
 import RegisterPage from './pages/RegisterPage/RegisterPage'
@@ -14,6 +15,7 @@ const App = () => {
   return (
     <div>
       <Routes>
+        <Route path='/' element={<LandingPage/>}/>
         {/*1. Route for signup and login page */}
         <Route path='/login' element={<LoginPage/>}/>
         <Route path='/signup' element={<RegisterPage/>}/>
