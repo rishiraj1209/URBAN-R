@@ -1,4 +1,5 @@
 import { Complaint } from '../models/complaintsModel.js';
+import { Rickshaw } from '../models/rickshawModel.js';
 
 export const getAllComplaints = async (req, res) => {
   try {
@@ -23,6 +24,16 @@ export const getMyComplaints = async (req, res) => {
 export const createComplaint = async (req, res) => {
   try {
     req.body.passenger = req.user.id;
+    // If frontend provided a vehicleNumber string, try to resolve it
+    // to a Rickshaw document and attach its id to the complaint.
+    if (req.body.vehicleNumber) {
+      const r = await Rickshaw.findOne({ vehicleNumber: req.body.vehicleNumber });
+      if (r) {
+        req.body.rickshaw = r._id;
+      }
+      // remove vehicleNumber from body so mongoose doesn't store unknown field
+      delete req.body.vehicleNumber;
+    }
     const complaint = await Complaint.create(req.body);
     res.status(201).json(complaint);
   } catch (error) {

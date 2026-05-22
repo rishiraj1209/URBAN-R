@@ -9,6 +9,7 @@ const ComplaintsPage = ({ onBack }) => {
     type: 'traffic',
     description: '',
     location: '',
+    vehicleNumber: '',
     photo: null
   });
   const [submitting, setSubmitting] = useState(false);
@@ -60,11 +61,12 @@ const ComplaintsPage = ({ onBack }) => {
       const payload = {
         type: formData.type,
         description: formData.description,
-        location: formData.location
+        location: formData.location,
+        vehicleNumber: formData.vehicleNumber || undefined
       };
       const res = await api.post('/api/complaints', payload);
       setComplaints(prev => [res.data, ...prev]);
-      setFormData({ type: 'traffic', description: '', location: '', photo: null });
+      setFormData({ type: 'traffic', description: '', location: '', vehicleNumber: '', photo: null });
     } catch (err) {
       console.error('Failed to submit complaint', err);
       alert(err.response?.data?.message || 'Failed to submit complaint');
@@ -153,6 +155,19 @@ const ComplaintsPage = ({ onBack }) => {
                   </div>
                 </div>
                 <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">Vehicle Number (optional)</label>
+                  <div className="relative">
+                    <Truck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                    <input
+                      name="vehicleNumber"
+                      value={formData.vehicleNumber}
+                      onChange={handleInputChange}
+                      placeholder="e.g. KA-01-AB-1234"
+                      className="w-full pl-12 pr-4 py-3 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-blue-200 focus:border-blue-300 shadow-sm"
+                    />
+                  </div>
+                </div>
+                <div>
                   <label className="block text-sm font-semibold text-neutral-700 mb-2">Attach Photo</label>
                   <div 
                     className="border-2 border-dashed border-neutral-300 rounded-2xl p-8 text-center hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer h-32 flex flex-col items-center justify-center"
@@ -199,7 +214,7 @@ const ComplaintsPage = ({ onBack }) => {
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {complaints.map((complaint) => (
-                <div key={complaint.id} className="border border-neutral-200 rounded-2xl p-6 hover:shadow-md transition-all group">
+                <div key={complaint._id || complaint.id} className="border border-neutral-200 rounded-2xl p-6 hover:shadow-md transition-all group">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       {complaintTypes.find(t => t.value === complaint.type)?.icon ? 
@@ -208,7 +223,7 @@ const ComplaintsPage = ({ onBack }) => {
                       }
                       <div>
                         <h4 className="font-bold text-lg capitalize">{complaint.type}</h4>
-                        <p className="text-neutral-600 text-sm">{complaint.location} • {complaint.date}</p>
+                        <p className="text-neutral-600 text-sm">{complaint.location} • {complaint.createdAt ? new Date(complaint.createdAt).toLocaleString() : complaint.date}</p>
                       </div>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[complaint.status]}`}>
